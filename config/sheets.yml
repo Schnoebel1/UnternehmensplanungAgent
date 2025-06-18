@@ -1,0 +1,31 @@
+# Sheet-Mapping für BS (2)
+# ========================
+
+sheets:
+  "BS (2)":
+    header_aliases: ["t0"]
+    forecast_cols:   ["t1", "t2", "t3"]
+
+    # Diese Konten werden prognostiziert und ggf. überschrieben
+    forecast_accounts:
+      - "Immaterielle Vermögensgegenstände"
+      - "Sachanlagen"
+      - "Finanzanlagen"
+      - "Vorräte"
+      - "Forderungen aus L und L"
+      - "sonstige Vermögensgegenstände"
+      - "Rechnungsabgrenzungsposten"
+      - "sonstige Rückstellungen"
+      - "erhaltene Anzahlungen"
+      - "Verbindlichkeiten aus L und L"
+      - "Bankverbindlichkeiten"
+
+    # Diese Konten bleiben unverändert, können aber für Berechnungen eingelesen werden
+    readonly_accounts:
+      - "Liquide Mittel"
+      - "Gezeichnetes Kapital"
+      - "Gewinnvortrag/Verlustvortrag"
+      - "Profit/Loss"
+      - "Steuerrückstellungen"
+      - "Assets"
+      - "Equity & Liabilities"
