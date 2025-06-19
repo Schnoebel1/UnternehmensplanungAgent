@@ -1,0 +1,18 @@
+row,text,category
+3,Erlöse Stoßstangen Inland,forecast
+4,Erlöse Stoßstangen China,forecast
+5,Erlöse Stoßstangen Russland,forecast
+8,Erlöse Aschenbecher Russland,forecast
+11,sbE,readonly
+12,Erlöse Verkauf Abfallprodukte,forecast
+13,Erlös Veräußerung AV,forecast
+14,Sonstiges,forecast
+23,Nachrichtlich: verkaufte Stückzahlen,readonly
+24,Stoßstangen Inland,forecast
+25,Stoßstangen China,forecast
+26,Stoßstangen Russland,forecast
+28,Aschenbecher Russland,forecast
+33,Erlöse Stoßstangen Inland,forecast
+34,Erlöse Stoßstangen China,forecast
+35,Erlöse Stoßstangen Russland,forecast
+37,Erlöse Aschenbecher Russland,forecast

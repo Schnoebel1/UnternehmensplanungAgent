@@ -1,0 +1,9 @@
+row,text,category
+3,EDV-Software,forecast
+4,Büroeinrichtung,forecast
+5,Betriebs- und Geschäftsausstattung,forecast
+6,Produktionsanlagen,forecast
+7,Sum,readonly
+9,CAPEX,readonly
+17,Anlagengüter bis 31.12.t0,readonly
+89,Sum,readonly

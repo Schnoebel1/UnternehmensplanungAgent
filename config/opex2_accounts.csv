@@ -1,0 +1,16 @@
+row,text,category
+3,Produktionsverlegung,readonly
+4,Reisekosten Inland,forecast
+5,Reisekosten China,forecast
+6,Reisekosten Russland,forecast
+7,Miete,forecast
+8,Bürobedarf,forecast
+9,"Gas, Strom, Wasser",forecast
+10,Jahresabschluss / Prüfungskosten,forecast
+11,Bierstreitigkeiten,readonly
+12,Rechts- und Beratungskosten,forecast
+13,Marketing/Vertriebskosten,forecast
+25,Reisekosten Inland,forecast
+26,Reisekosten China,forecast
+27,Reisekosten Russland,forecast
+28,Marketing/Vertrieb,readonly

@@ -1,0 +1,38 @@
+row,text,category
+3,A. Uto,forecast
+4,P. Rap,forecast
+5,Buchhalter 2,forecast
+6,Buchhalter 3,forecast
+7,Controller,forecast
+8,Sales Leiter,forecast
+9,Sales 2,forecast
+10,Sales 3,forecast
+11,Sales 4,forecast
+12,Sales 5,forecast
+13,Sales 6,forecast
+14,Sales 7,forecast
+15,Sales 8,forecast
+16,Logistiker Leiter,forecast
+17,Logistiker 2,forecast
+18,Logistiker 3,forecast
+19,Entwickler Leiter,forecast
+20,Entwickler 2,forecast
+21,Entwickler 3,forecast
+22,Entwickler 4,forecast
+23,Blue Collar Leiter,forecast
+24,Blue Collar 2,forecast
+25,Blue Collar 3,forecast
+26,Blue Collar 4,forecast
+27,Blue Collar 5,forecast
+28,Blue Collar 6,forecast
+29,Blue Collar 7,forecast
+30,Blue Collar 8,forecast
+31,Blue Collar 9,forecast
+32,Blue Collar 10,forecast
+33,Blue Collar 11,forecast
+34,Blue Collar 12,forecast
+35,NN 1,readonly
+36,NN 2,readonly
+37,NN 3,readonly
+38,NN 4,readonly
+39,NN 5,readonly

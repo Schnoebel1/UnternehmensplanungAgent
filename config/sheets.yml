@@ -2,6 +2,7 @@
 
 sheets:
   "BS (2)":
+    account_column: "A"              # ← hier die Spalte, in der die Namen wirklich stehen
     header_aliases: ["t0"]
     forecast_cols:   ["t1", "t2", "t3"]
 
@@ -30,6 +31,7 @@ sheets:
       - "Equity & Liabilities"
 
   "PnL (2)":
+    account_column: "A"              # ← hier die Spalte, in der die Namen wirklich stehen
     header_aliases: ["t0"]
     forecast_cols:   ["t1", "t2", "t3"]
 
@@ -52,6 +54,7 @@ sheets:
       - "Profit/Loss"
 
   "CFR (2)":
+    account_column: "A"              # ← hier die Spalte, in der die Namen wirklich stehen
     header_aliases: ["t0"]
     forecast_cols: ["t1", "t2", "t3"]
 
@@ -69,6 +72,7 @@ sheets:
  
 
   "REV_sbE (2)":
+    account_column: "B"              # ← hier die Spalte, in der die Namen wirklich stehen
     header_aliases: ["t0"]
     forecast_cols: ["t1", "t2", "t3"]
 
@@ -76,6 +80,7 @@ sheets:
       - "Erlöse Stoßstangen Inland"
       - "Erlöse Stoßstangen China"
       - "Erlöse Stoßstangen Russland"
+      - "Erlöse Aschenbecher Russland"
       - "Erlöse Verkauf Abfallprodukte"
       - "Erlös Veräußerung AV"
       - "Sonstiges"
@@ -85,6 +90,7 @@ sheets:
       - "Aschenbecher Russland"
 
   "COGS (2)":
+    account_column: "B"              # ← hier die Spalte, in der die Namen wirklich stehen
     header_aliases: ["t0"]
     forecast_cols: ["t1", "t2", "t3"]
 
@@ -97,6 +103,7 @@ sheets:
       - "Russland Stoßstangen"
       - "Russland Aschenbecher"
   "OPEX (2)":
+    account_column: "A"              # ← hier die Spalte, in der die Namen wirklich stehen
     header_aliases: ["t0"]
     forecast_cols: ["t1", "t2", "t3"]
 
@@ -113,6 +120,7 @@ sheets:
       - "Marketing/Vertriebskosten"
 
   "CAPEX (2)":
+    account_column: "A"              # ← hier die Spalte, in der die Namen wirklich stehen
     header_aliases: ["t0"]
     forecast_cols: ["t1", "t2", "t3"]
 
@@ -122,8 +130,9 @@ sheets:
       - "Büroeinrichtung"
       - "Betriebs- und Geschäftsausstattung"
       - "Produktionsanlagen"
-  "Staff (2)":
-    header_aliases: ["t0"]
+  "STAFF (2)":
+    account_column: "B"              # ← hier die Spalte, in der die Namen wirklich stehen
+    header_aliases: ["Gesamt 12/t0"]
     forecast_cols: ["t1", "t2", "t3"]
 
     # Jede einzelne Zeile (Mitarbeiter) soll prognostiziert werden:
