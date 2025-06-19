@@ -1,130 +1,177 @@
 """
-writer_bs.py – Forecast-Writer für BS (2)
-----------------------------------------
+writer_bs.py – Tiefen-Debug (BS 2) mit Doppel-Strategie und LLM-only Forecast
+===========================================================================
 
-• schreibt nur die in config/sheets.yml -> forecast_accounts aufgelisteten Konten
-• lässt alles andere exakt unverändert
-• robustes Matching (Groß/klein, Leer- oder Sonderzeichen werden ignoriert)
-• Debug-Ausgabe: zeigt im Terminal, welche Zeile geschrieben wurde
+• nutzt config/bs2_accounts.csv für row→category
+• Workbook A (data_only=True) zum Auslesen historischer Werte
+• Workbook B (data_only=False) zum Schreiben der Forecasts
+• schreibt **nur** die LLM-Vorhersagen in Spalten F–H (t1–t3)
+• schreibt die JSON-Antwort in Spalte I
+• loggt jeden Schritt inkl. LLM-Prompt/-Antwort in outputs/bs2_debug.txt
 """
 
 from __future__ import annotations
 from pathlib import Path
-from typing import Dict, List
+from csv import DictReader
+import shutil
 import re
-import yaml
+import json
+import warnings
+from typing import List
 
-import numpy as np
 from openpyxl import load_workbook
+from openpyxl.utils import column_index_from_string
 
-from loader import find_header_row, col_map
+from loader   import find_header_row
 from forecast import cagr, project
 from explanations import explain
 
 # --------------------------------------------------------------------------- #
-#  Config laden                                                               #
+#  Pfade & Konstanten                                                         #
 # --------------------------------------------------------------------------- #
+BASE       = Path(__file__).resolve().parent.parent
+MAP_CSV    = BASE / "config"  / "bs2_accounts.csv"
+SRC_XLSX   = BASE / "data"    / "UnternehmensplanungExcel.xlsx"
+DST_XLSX   = BASE / "outputs" / "UnternehmensplanungForecast.xlsx"
+LOG_FILE   = BASE / "outputs" / "bs2_debug.txt"
 
-CFG_FILE = Path(__file__).resolve().parent.parent / "config" / "sheets.yml"
-with CFG_FILE.open(encoding="utf-8") as f:
-    CFG: Dict = yaml.safe_load(f)["sheets"]["BS (2)"]
+SHEET      = "BS (2)"
+COL_T0     = column_index_from_string("E")  # Excel-Spalte t0
+COL_FC     = {
+    "t1": column_index_from_string("F"),
+    "t2": column_index_from_string("G"),
+    "t3": column_index_from_string("H"),
+}
+# Spalte direkt rechts neben t3
+COL_REASON = COL_FC["t3"] + 1
 
-FORECAST_COLS = CFG["forecast_cols"]           # ["t1","t2","t3"]
+PLACEH     = {None, "", "-", "???", "."}
 
-# ---------------- Normalisierung ------------------------------------------- #
-_norm = re.compile(r"[^\w]+")   # alles außer a–z, 0–9 als Trennzeichen
+LOG: List[str] = []
+def log(msg: str) -> None:
+    LOG.append(msg)
 
-def normalize(txt: str) -> str:
-    """Konto-String in Vergleichsform bringen."""
-    return _norm.sub("", txt).lower()
+# ---------- safe_float ------------------------------------------------------ #
+_rx = re.compile(r"[^\d,.\-]")
+def safe_float(v) -> float | None:
+    if v in PLACEH:
+        return None
+    if isinstance(v, (int, float)):
+        return float(v)
+    if isinstance(v, str):
+        s = _rx.sub("", v).replace(".", "").replace(",", ".")
+        try:
+            return float(s)
+        except ValueError:
+            return None
+    return None
 
-FORECAST_ACCOUNTS = {normalize(a) for a in CFG["forecast_accounts"]}
-READONLY_ACCOUNTS  = {normalize(a) for a in CFG["readonly_accounts"]}
-
-# --------------------------------------------------------------------------- #
-#  Konstanten                                                                 #
-# --------------------------------------------------------------------------- #
-
-SHEET_NAME   = "BS (2)"
-PLACEHOLDERS = {None, "", "-", "–", "."}
-PERIODS      = ["t-2", "t-1", "t0"] + FORECAST_COLS   # ['t-2', …, 't3']
+# ---------- Konto-Spalte erkennen ------------------------------------------ #
+def detect_acc_col(ws, header_row: int, max_col: int = 15) -> int | None:
+    for col in range(1, max_col + 1):
+        if any(
+            isinstance(ws.cell(r, col).value, str)
+            and ws.cell(r, col).value.strip()
+            for r in range(header_row + 1, header_row + 8)
+        ):
+            return col
+    return None
 
 # --------------------------------------------------------------------------- #
 #  Hauptfunktion                                                              #
 # --------------------------------------------------------------------------- #
+def write_bs_forecast() -> None:
+    # 1) Mapping laden
+    if not MAP_CSV.exists():
+        print("Mapping CSV fehlt → discover_bs_accounts.py zuerst ausführen.")
+        return
 
-def write_bs_forecast(src: Path, dst: Path) -> None:
-    wb = load_workbook(src, data_only=False)
-    if SHEET_NAME not in wb.sheetnames:
-        raise ValueError(f"'{SHEET_NAME}' fehlt im Workbook")
+    cfg: dict[int,str] = {
+        int(row["row"]): row["category"].strip().lower()
+        for row in DictReader(MAP_CSV.open(encoding="utf-8"))
+    }
+    log(f"Mapping geladen: {len(cfg)} Einträge")
 
-    ws = wb[SHEET_NAME]
-    header = find_header_row(ws)
-    if header is None:
-        raise RuntimeError("Header-Zeile mit 't0' nicht gefunden")
+    # 2) Workbook kopieren
+    DST_XLSX.parent.mkdir(exist_ok=True, parents=True)
+    shutil.copy(SRC_XLSX, DST_XLSX)
 
-    col = col_map(ws, header)
-    if not all(p in col for p in PERIODS):
-        missing = [p for p in PERIODS if p not in col]
-        raise RuntimeError(f"Fehlende Spalten im Header: {missing}")
+    # 3) Workbook A zum Lesen, Workbook B zum Schreiben
+    data_wb = load_workbook(SRC_XLSX, data_only=True)
+    data_ws = data_wb[SHEET]
 
-    account_col = 2
-    span_years  = 2
+    wb      = load_workbook(DST_XLSX, data_only=False)
+    ws      = wb[SHEET]
 
-    writes = 0  # Zähler für Debug
+    # 4) Header- & Konto-Spalte finden
+    header_row = find_header_row(ws)
+    if header_row is None:
+        log("ERROR: Header-Zeile mit 't0' nicht gefunden.")
+        _write_log()
+        return
+    log(f"Header-Zeile: {header_row}")
 
-    for r in range(header + 1, ws.max_row + 1):
-        raw = ws.cell(r, account_col).value
-        if not isinstance(raw, str):
+    acc_col = detect_acc_col(ws, header_row)
+    if acc_col is None:
+        log("ERROR: Kontospalte nicht erkannt.")
+        _write_log()
+        return
+    log(f"Kontospalte erkannt: {acc_col}")
+
+    # 5) Forecast-Schleife
+    writes = 0
+    span   = 2  # Jahre zwischen t-2 und t0
+
+    for r, category in cfg.items():
+        if category != "forecast":
+            log(f"Skip row {r} (category={category})")
             continue
-        acc = raw.strip()
-        acc_norm = normalize(acc)
 
-        # Konto weder forecastbar noch readonly → überspringen
-        if acc_norm not in FORECAST_ACCOUNTS | READONLY_ACCOUNTS:
+        # 5.1) Historische Werte aus Workbook A lesen
+        t2 = safe_float(data_ws.cell(r, COL_T0 - 2).value)
+        t1 = safe_float(data_ws.cell(r, COL_T0 - 1).value)
+        t0 = safe_float(data_ws.cell(r, COL_T0    ).value)
+        log(f"ROW {r} | t-2={t2} | t-1={t1} | t0={t0}")
+
+        if t2 is None or t0 is None:
+            log(f"  -> BAD DATA in row {r}")
             continue
 
-        # Nur forecasten, wenn es in der Forecast-Liste ist
-        if acc_norm not in FORECAST_ACCOUNTS:
-            continue
+        # 5.2) Forecast mit LLM (explain liefert JSON-String)
+        raw_json = explain(ws.cell(r, acc_col).value, [t2, t1, t0], [])
+        log(f"  RAW_LLM row {r}: {raw_json}")
 
-        # Historische Werte lesen
+        # 5.3) JSON parsen und Werte übernehmen
         try:
-            t_minus_2 = float(ws.cell(r, col["t-2"]).value)
-            t0        = float(ws.cell(r, col["t0"]).value)
-        except (TypeError, ValueError):
-            continue
+            obj = json.loads(raw_json)
+            for key in ("t1","t2","t3"):
+                val = obj.get(key)
+                if isinstance(val, (int,float)):
+                    ws.cell(r, COL_FC[key], value=round(val,2))
+                    writes += 1
+            # Reason in Spalte I
+            reason = obj.get("reason", "")
+            ws.cell(r, COL_REASON, value=str(reason))
+        except Exception as e:
+            log(f"  ERROR parsing JSON in row {r}: {e!s}")
+            # kein Fallback-Schreiben mehr (statisch), nur Log
 
-        growth  = cagr(t_minus_2, t0, span_years)
-        fcst: List[float] = project(t0, growth, horizon=3)
-
-        for idx, p in enumerate(FORECAST_COLS):      # t1, t2, t3
-            cell = ws.cell(r, col[p])
-
-            if cell.data_type == "f":                                  # Formel
-                continue
-            if isinstance(cell.value, (int, float)) and cell.value not in PLACEHOLDERS:
-                continue                                               # Zahl da
-            cell.value = round(fcst[idx], 2)
-            writes += 1
-
-        # Erklärung
-        expl = ws.cell(r, col["t3"] + 1)
-        if expl.value in PLACEHOLDERS and expl.data_type != "f":
-            expl.value = explain(acc, [t_minus_2, ws.cell(r, col["t-1"]).value, t0], fcst)
-
-    dst.parent.mkdir(exist_ok=True)
-    wb.save(dst)
-
-    print(f"BS (2): {writes} Zellen neu befüllt – Datei gespeichert → {dst}")
-
+    # 6) Speichern & Logfile
+    wb.save(DST_XLSX)
+    log(f"TOTAL writes={writes}")
+    log(f"Forecast gespeichert: {DST_XLSX}")
+    _write_log()
+    print("Fertig → Debug-Log in outputs/bs2_debug.txt")
 
 # --------------------------------------------------------------------------- #
-#  CLI-Test                                                                   #
+#  Hilfsfunktion zum Logfile-Schreiben                                        #
 # --------------------------------------------------------------------------- #
+def _write_log() -> None:
+    LOG_FILE.parent.mkdir(exist_ok=True, parents=True)
+    LOG_FILE.write_text("\n".join(LOG), encoding="utf-8")
 
+# --------------------------------------------------------------------------- #
+#  CLI                                                                        #
+# --------------------------------------------------------------------------- #
 if __name__ == "__main__":
-    import sys
-    src = Path(sys.argv[1])
-    dst = src.parent.parent / "outputs" / "UnternehmensplanungForecast.xlsx"
-    write_bs_forecast(src, dst)
+    write_bs_forecast()

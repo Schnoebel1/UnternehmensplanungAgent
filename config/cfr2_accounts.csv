@@ -1,0 +1,31 @@
+row,text,category
+4,Periodenergebnis,
+6,Abschreibungen auf Gegenstände des Anlagevermögens,
+8,Veränderungen der Rückstellungen,
+10,Sonstige zahlungsunwirksame Veränderungen,
+12,Veränderungen der Vorräte,
+14,Veränderungen der Forderungen und übrigen Aktiva,
+16,Veränderungen der Verbindlichkeiten und übrigen Passiva,
+18,Zinsergebnis,
+20,Einzahlungen aus außerordentlichen Posten,forecast
+22,Auszahlungen aus außerordentlichen Posten,forecast
+24,Cashflow aus laufender Geschäftstätigkeit,
+27,Auszahlungen für Investitionen in Gegenstände des Anlagevermögens,
+29,Einzahlungen aus dem Abgang von Gegenständen des Anlagevermögens,forecast
+31,Auszahlungen im Rahmen der kurz- und mittelfristigen Finanzdisposition,forecast
+33,Einzahlungen im Rahmen der kurz- und mittelfristigen Finanzdisposition,forecast
+35,Erhaltene Dividenden,forecast
+37,Erhaltene Zinsen,
+39,Einzahlungen aus außerordentlichen Posten,forecast
+41,Auszahlungen aus außerordentlichen Posten,forecast
+43,Cashflow aus der Investitionstätigkeit,
+46,Einzahlung aus der Aufnahme von Finanzverbindlichkeiten,forecast
+48,Auszahlungen aus der Tilgung von Finanzverbindlichkeiten,forecast
+50,Gezahlte Zinsen,
+52,Einzahlungen aus außerordentlichen Posten,forecast
+54,Auszahlungen aus außerordentlichen Posten,forecast
+56,Dividenden an Gesellschafter,forecast
+58,Cashflow aus der Finanzierungstätigkeit,
+61,Zahlungswirksame Veränderungen des Finanzmittelfonds,
+62,Finanzmittelfonds am Anfang der Periode,
+63,Finanzmittelfonds am Ende der Periode,

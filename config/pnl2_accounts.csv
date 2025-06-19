@@ -1,0 +1,13 @@
+row,text,category
+4,Umsatzerlöse,forecast
+6,sonstige betriebliche Erträge,forecast
+8,Materialaufwand,forecast
+10,Personalaufwand,forecast
+12,Abschreibungen,forecast
+14,sonstige betriebliche Aufwendungen,forecast
+16,Erträge aus Beteiligungen,forecast
+18,Zinserträge,forecast
+20,Zinsaufwendungen,forecast
+22,Ertragsteuern,readonly
+24,sonstige Steuern,forecast
+26,Profit/Loss,readonly

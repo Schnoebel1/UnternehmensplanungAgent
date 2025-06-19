@@ -1,0 +1,19 @@
+row,text,category
+4,Immaterielle Vermögensgegenstände,forecast
+6,Sachanlagen,forecast
+8,Finanzanlagen,forecast
+10,Vorräte,forecast
+12,Forderungen aus L und L,forecast
+14,sonstige Vermögensgegenstände,forecast
+16,Liquide Mittel,readonly
+18,Rechnungsabgrenzungsposten,forecast
+20,Assets,readonly
+22,Gezeichnetes Kapital,readonly
+23,Gewinnvortrag/Verlustvortrag,readonly
+25,Profit/Loss,readonly
+27,Steuerrückstellungen,readonly
+29,sonstige Rückstellungen,forecast
+31,erhaltene Anzahlungen,forecast
+33,Verbindlichkeiten aus L und L,forecast
+35,Bankverbindlichkeiten,forecast
+37,Equity & Liabilities,readonly

@@ -1,5 +1,4 @@
-# Sheet-Mapping für BS (2)
-# ========================
+# config/sheets.yml
 
 sheets:
   "BS (2)":
@@ -29,3 +28,135 @@ sheets:
       - "Steuerrückstellungen"
       - "Assets"
       - "Equity & Liabilities"
+
+  "PnL (2)":
+    header_aliases: ["t0"]
+    forecast_cols:   ["t1", "t2", "t3"]
+
+    # Diese Konten werden prognostiziert und ggf. überschrieben
+    forecast_accounts:
+      - "Umsatzerlöse"
+      - "sonstige betriebliche Erträge"
+      - "Materialaufwand"
+      - "Personalaufwand"
+      - "Abschreibungen"
+      - "sonstige betriebliche Aufwendungen"
+      - "Erträge aus Beteiligungen"
+      - "Zinserträge"
+      - "Zinsaufwendungen"
+      - "sonstige Steuern"
+
+    # Diese Konten bleiben unverändert
+    readonly_accounts:
+      - "Ertragsteuern"
+      - "Profit/Loss"
+
+  "CFR (2)":
+    header_aliases: ["t0"]
+    forecast_cols: ["t1", "t2", "t3"]
+
+    # Diese Konten werden prognostiziert (forecast)
+    forecast_accounts:
+      - "Einzahlungen aus außerordentlichen Posten"
+      - "Auszahlungen aus außerordentlichen Posten"
+      - "Einzahlungen aus dem Abgang von Gegenständen des Anlagevermögens"
+      - "Auszahlungen im Rahmen der kurz- und mittelfristigen Finanzdisposition"
+      - "Einzahlungen im Rahmen der kurz- und mittelfristigen Finanzdisposition"
+      - "Erhaltene Dividenden"
+      - "Einzahlung aus der Aufnahme von Finanzverbindlichkeiten"
+      - "Auszahlungen aus der Tilgung von Finanzverbindlichkeiten"
+      - "Dividenden an Gesellschafter"
+ 
+
+  "REV_sbE (2)":
+    header_aliases: ["t0"]
+    forecast_cols: ["t1", "t2", "t3"]
+
+    forecast_accounts:
+      - "Erlöse Stoßstangen Inland"
+      - "Erlöse Stoßstangen China"
+      - "Erlöse Stoßstangen Russland"
+      - "Erlöse Verkauf Abfallprodukte"
+      - "Erlös Veräußerung AV"
+      - "Sonstiges"
+      - "Stoßstangen Inland"
+      - "Stoßstangen China"
+      - "Stoßstangen Russland"
+      - "Aschenbecher Russland"
+
+  "COGS (2)":
+    header_aliases: ["t0"]
+    forecast_cols: ["t1", "t2", "t3"]
+
+    forecast_accounts:
+      - "Kunststoffgranulat"
+      - "Lacke"
+      - "Melassen"
+      - "Inland"
+      - "China"
+      - "Russland Stoßstangen"
+      - "Russland Aschenbecher"
+  "OPEX (2)":
+    header_aliases: ["t0"]
+    forecast_cols: ["t1", "t2", "t3"]
+
+    # Diese Zeilen werden prognostiziert (weiße Felder t1–t3)
+    forecast_accounts:
+      - "Reisekosten Inland"
+      - "Reisekosten China"
+      - "Reisekosten Russland"
+      - "Miete"
+      - "Bürobedarf"
+      - "Gas, Strom, Wasser"
+      - "Jahresabschluss / Prüfungskosten"
+      - "Rechts- und Beratungskosten"
+      - "Marketing/Vertriebskosten"
+
+  "CAPEX (2)":
+    header_aliases: ["t0"]
+    forecast_cols: ["t1", "t2", "t3"]
+
+    # Diese Zeilen werden prognostiziert (weiße Felder t1–t3)
+    forecast_accounts:
+      - "EDV-Software"
+      - "Büroeinrichtung"
+      - "Betriebs- und Geschäftsausstattung"
+      - "Produktionsanlagen"
+  "Staff (2)":
+    header_aliases: ["t0"]
+    forecast_cols: ["t1", "t2", "t3"]
+
+    # Jede einzelne Zeile (Mitarbeiter) soll prognostiziert werden:
+    forecast_accounts:
+      - "A. Uto"
+      - "P. Rap"
+      - "Buchhalter 2"
+      - "Buchhalter 3"
+      - "Controller"
+      - "Sales Leiter"
+      - "Sales 2"
+      - "Sales 3"
+      - "Sales 4"
+      - "Sales 5"
+      - "Sales 6"
+      - "Sales 7"
+      - "Sales 8"
+      - "Logistiker Leiter"
+      - "Logistiker 2"
+      - "Logistiker 3"
+      - "Entwickler Leiter"
+      - "Entwickler 2"
+      - "Entwickler 3"
+      - "Entwickler 4"
+      - "Blue Collar Leiter"
+      - "Blue Collar 2"
+      - "Blue Collar 3"
+      - "Blue Collar 4"
+      - "Blue Collar 5"
+      - "Blue Collar 6"
+      - "Blue Collar 7"
+      - "Blue Collar 8"
+      - "Blue Collar 9"
+      - "Blue Collar 10"
+      - "Blue Collar 11"
+      - "Blue Collar 12"
